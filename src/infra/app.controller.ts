@@ -1,24 +1,15 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { createNotificationBody } from './create-notification-body';
 import { PrismaService } from './prisma.service';
 
 @Controller('notifications')
 export class AppController {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   @Get()
   list() {
     return this.prisma.notification.findMany();
-  }
-
-  @Get(":id")
-  async retrieve(id: string) {
-    return await this.prisma.notification.findFirst({
-      where: {
-        id: id
-      }
-    });
   }
 
   @Post()
@@ -35,17 +26,26 @@ export class AppController {
     });
   }
 
-  @Delete(":id")
-  async delete(id: string) {
-
-    const deletedNotification = await this.prisma.notification.findFirst({
+  @Get(':id')
+  async retrieve(@Param('id') id: string) {
+    return await this.prisma.notification.findFirst({
       where: {
-        id: id
-      }
+        id: id,
+      },
+    });
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    const deletedNotification = await this.prisma.notification.delete({
+      where: {
+        id: id,
+      },
     });
 
     return {
-      message: "Deleted", deletedNotification
-    }
+      message: 'Deleted',
+      deletedNotification,
+    };
   }
 }

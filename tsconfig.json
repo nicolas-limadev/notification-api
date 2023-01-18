@@ -13,6 +13,7 @@
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
+    "resolveJsonModule": true,
     "strict": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
@@ -23,7 +24,7 @@
       "@application/*":["./src/application/*"],
       "@helpers/*":["./src/helpers/*"],
       "@infra/*":["./src/infra/*"],
-      "@test/*":["./test/*"],
+      "@test/*":["./test/*"]
     }
   }
 }

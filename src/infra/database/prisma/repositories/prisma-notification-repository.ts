@@ -9,7 +9,13 @@ export class PrismaNotificationsRepository implements NotificationsRepository {
   constructor(private prisma: PrismaService) {}
 
   async findManyByRecipientId(recipientId: string): Promise<Notification[]> {
-    throw new Error('Method not implemented.');
+    const notifications = await this.prisma.notification.findMany({
+      where: {
+        recipientId,
+      },
+    });
+
+    return notifications.map(PrismaNotificationMapper.toDomain);
   }
 
   async findById(notificationId: string): Promise<Notification | null> {
@@ -19,11 +25,20 @@ export class PrismaNotificationsRepository implements NotificationsRepository {
       },
     });
 
-    return notification;
+    if (!notification) {
+      return null;
+    }
+    return PrismaNotificationMapper.toDomain(notification);
   }
 
   async countManyByRecipientId(recipientId: string): Promise<number> {
-    throw new Error('Method not implemented.');
+    const count = await this.prisma.notification.count({
+      where: {
+        recipientId,
+      },
+    });
+
+    return count;
   }
 
   async create(notification: Notification): Promise<void> {
@@ -35,6 +50,13 @@ export class PrismaNotificationsRepository implements NotificationsRepository {
   }
 
   async save(notification: Notification): Promise<void> {
-    throw new Error('Method not implemented.');
+    const raw = PrismaNotificationMapper.toPrisma(notification);
+
+    await this.prisma.notification.update({
+      where: {
+        id: raw.id,
+      },
+      data: raw,
+    });
   }
 }
